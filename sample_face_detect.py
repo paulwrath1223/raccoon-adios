@@ -23,7 +23,10 @@ targetX, targetY = 0, 0
 
 while True:
     success, img = cap.read()
-    imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    try:
+        imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    except:
+        raise Exception("Camera not found!")
 
     # Getting corners around the face
 
