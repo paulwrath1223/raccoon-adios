@@ -2,7 +2,7 @@ import cv2
 
 # ^ pip install opencv-contrib-python
 
-# TODO: empty 'face_coords' if no face has been detecting for a couple seconds
+
 
 # Enable camera
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -16,29 +16,45 @@ faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontal
 # if you want to detect any object for example eyes, use one more layer of classifier as below:
 eyeCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_eye_tree_eyeglasses.xml")
 
-face_coords = []
+
+eye_coords = []
+targetX, targetY = 0, 0
+
 
 while True:
     success, img = cap.read()
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Getting corners around the face
-    faces = faceCascade.detectMultiScale(imgGray, 1.3, 5)  # 1.3 = scale factor, 5 = minimum neighbor
-    # drawing bounding box around face
-    if len(faces) != 0:
-        face_coords = []  # list of tuples containing coordinates of the center of the face
-    for (x, y, w, h) in faces:
-        face_coords.append((x+(w/2), y+(h/2)))
-        img = cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 3)
+
 
     # detecting eyes
     eyes = eyeCascade.detectMultiScale(imgGray)
     # drawing bounding box for eyes
+
+    eye_coords = []
     for (ex, ey, ew, eh) in eyes:
+        eye_coords.append((ex + (ew / 2), ey + (eh / 2)))
         img = cv2.rectangle(img, (ex, ey), (ex+ew, ey+eh), (255, 0, 0), 3)
 
+    eyesX = []
+    eyesY = []
+    if len(eye_coords) > 0:
+        for eye in eye_coords:
+            eyesX.append(eye[0])
+            eyesY.append(eye[1])
+        targetX = int(sum(eyesX) / len(eyesX))
+        targetY = int(sum(eyesY) / len(eyesY))
+    if targetX < 300:
+        print("left")
+    elif targetX > 340:
+        print("right")
+    print(f"targetX: {targetX}\ntargetY: {targetY}")
+
+    img = cv2.rectangle(img, (targetX-5, targetY-5), (targetX+5, targetY+5), (255, 255, 0), 3)
+
     cv2.imshow('face_detect', img)
-    print(face_coords)  # prints last known coords of face
+
     if cv2.waitKey(10) & 0xFF == ord('q'):
         break
 cap.release()
