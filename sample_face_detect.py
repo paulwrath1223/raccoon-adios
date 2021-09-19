@@ -30,7 +30,6 @@ while True:
 
     # Getting corners around the face
 
-
     # detecting eyes
     eyes = eyeCascade.detectMultiScale(imgGray)
     # drawing bounding box for eyes
@@ -52,7 +51,13 @@ while True:
         print("left")
     elif targetX > 340:
         print("right")
-    print(f"targetX: {targetX}\ntargetY: {targetY}")
+
+    if targetY < 200:
+        print("up")
+    elif targetY > 220:
+        print("down")
+
+    # print(f"targetX: {targetX}\ntargetY: {targetY}")
 
     img = cv2.rectangle(img, (targetX-5, targetY-5), (targetX+5, targetY+5), (255, 255, 0), 3)
 
