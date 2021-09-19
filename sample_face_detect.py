@@ -1,8 +1,28 @@
 import cv2
 
+import serial
+import time
+arduino = serial.Serial(port='COM4', baudrate=115200, timeout=.1)
+
+
+def write_read(message):
+    arduino.write(bytes(message, 'utf-8'))
+    time.sleep(0.05)
+    data = arduino.readline()
+    return data
+
+
+def set_pos(x, y):
+    value = write_read(x)
+    if value == "x":
+        value = write_read(y)
+        if value != "y":
+            raise Exception("arduino did not acknowledge y target")
+    else:
+        raise Exception("arduino did not acknowledge x target")
+
+
 # ^ pip install opencv-contrib-python
-
-
 
 # Enable camera
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -19,7 +39,7 @@ eyeCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_eye_tree
 
 eye_coords = []
 targetX, targetY = 0, 0
-
+dx, dy = 0, 0
 
 while True:
     success, img = cap.read()
@@ -47,15 +67,22 @@ while True:
             eyesY.append(eye[1])
         targetX = int(sum(eyesX) / len(eyesX))
         targetY = int(sum(eyesY) / len(eyesY))
+    else:  # if no target currently on screen, do not move camera
+        targetX = 320
+        targetY = 210
     if targetX < 300:
-        print("left")
+        dx = 1
     elif targetX > 340:
-        print("right")
+        dx = -1
+    else:
+        dx = 0
 
     if targetY < 200:
-        print("up")
+        dy = 1
     elif targetY > 220:
-        print("down")
+        dy = -1
+    else:
+        dy = 0
 
     # print(f"targetX: {targetX}\ntargetY: {targetY}")
 
