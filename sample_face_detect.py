@@ -13,10 +13,11 @@ def write_read(message):
 
 
 def set_pos(x, y):
-    out = str(x)+","+str(y)
+    out = str(x)+str(y)+"\n"
     value = write_read(out)
     print(f"write :{out}")
     print(f"read :{value}")
+
 
 # ^ pip install opencv-contrib-python
 
@@ -67,9 +68,9 @@ while True:
         targetX = 320
         targetY = 210
     if targetX < 300:
-        dx = 1
+        dx = 2
     elif targetX > 340:
-        dx = 2  # 2 means -1, but using only one char
+        dx = 1  # 2 means -1, but using only one char
     else:
         dx = 0
 
