@@ -2,25 +2,21 @@ import cv2
 
 import serial
 import time
-arduino = serial.Serial(port='COM4', baudrate=115200, timeout=.1)
+arduino = serial.Serial(port='COM20', baudrate=115200, timeout=.1)  # change com port depending on the com port
 
 
 def write_read(message):
-    arduino.write(bytes(message, 'utf-8'))
+    arduino.write(bytes(str(message), 'utf-8'))  # gives 'TypeError: encoding without a string argument'
     time.sleep(0.05)
     data = arduino.readline()
     return data
 
 
 def set_pos(x, y):
-    value = write_read(x)
-    if value == "x":
-        value = write_read(y)
-        if value != "y":
-            raise Exception("arduino did not acknowledge y target")
-    else:
-        raise Exception("arduino did not acknowledge x target")
-
+    out = str(x)+","+str(y)
+    value = write_read(out)
+    print(f"write :{out}")
+    print(f"read :{value}")
 
 # ^ pip install opencv-contrib-python
 
@@ -73,19 +69,19 @@ while True:
     if targetX < 300:
         dx = 1
     elif targetX > 340:
-        dx = -1
+        dx = 2  # 2 means -1, but using only one char
     else:
         dx = 0
 
     if targetY < 200:
         dy = 1
     elif targetY > 220:
-        dy = -1
+        dy = 2  # 2 means -1, but using only one char
     else:
         dy = 0
 
     # print(f"targetX: {targetX}\ntargetY: {targetY}")
-
+    set_pos(dx, dy)
     img = cv2.rectangle(img, (targetX-5, targetY-5), (targetX+5, targetY+5), (255, 255, 0), 3)
 
     cv2.imshow('face_detect', img)

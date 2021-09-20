@@ -8,8 +8,7 @@ int dy = 0;
 Servo servoX;  // on pin 9
 Servo servoY;  // on pin 10
 
-char* in     = "0,0";
-String input = "0,0"
+String input = "0,0";
 
 void setup() {
   Serial.begin(115200);
@@ -17,18 +16,25 @@ void setup() {
 
   servoX.attach(9);  // attaches the servo on pin 9 to the servo object
   servoY.attach(10);
-  servoX.write(90);
-  servoY.write(90);
+  servoX.write(x);
+  servoY.write(y);
 }
 
 void loop() {
-  while(Serial.available() == 0)
-  {}
+  while(Serial.available() == 0)  /////// WHTY NO WORk!!????!?"??"
+  {
+    delay(1);
+  }
 
   input = Serial.readString();
-  dx = int(input[0]);
-  dy = int(input[2]);
-  Serial.println(dx+","+dy);
+  Serial.print("Input: ");
+  Serial.println(input);
+  dx = input[0];
+  dy = input[2];
+  Serial.println("delta:");
+  Serial.print(dx);
+  Serial.print(",");
+  Serial.println(dy);
 
 
   if(dx==2)
@@ -48,7 +54,10 @@ void loop() {
   {
     y += dy;
   }
-
+  Serial.println("absolute:");
+  Serial.print(x);
+  Serial.print(",");
+  Serial.println(y);
 
   servoX.write(x);
   servoY.write(y);                 // sets the servo position according to the scaled value
