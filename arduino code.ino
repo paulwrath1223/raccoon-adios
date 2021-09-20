@@ -1,3 +1,7 @@
+
+
+// TODO: WHY IS 'READ' RETURNING WHAT IT SENT??? DONDA
+
 #include <Servo.h>
 
 int x = 90;
@@ -21,7 +25,7 @@ void setup() {
 }
 
 void loop() {
-  while(Serial.available() == 0)  /////// WHTY NO WORk!!????!?"??"
+  while(Serial.available() == 0)
   {
     delay(1);
   }
