@@ -1,15 +1,16 @@
 import cv2
 
-import serial
-import time
-arduino = serial.Serial(port='COM20', baudrate=115200, timeout=.1)  # change com port depending on the com port
+# import serial
+# import time
+# arduino = serial.Serial(port='COM20', baudrate=115200, timeout=.1)  # change com port depending on the com port
 
 
 def write_read(message):
-    arduino.write(bytes(str(message), 'utf-8'))  # gives 'TypeError: encoding without a string argument'
-    time.sleep(0.05)
-    data = arduino.readline()
-    return data
+    # arduino.write(bytes(str(message), 'utf-8'))  # gives 'TypeError: encoding without a string argument'
+    # time.sleep(0.05)
+    # data = arduino.readline()
+    # return data
+    return ""
 
 
 def set_pos(x, y):
@@ -50,16 +51,30 @@ while True:
 
     # detecting eyes
     eyes = eyeCascade.detectMultiScale(imgGray)
+    faces = faceCascade.detectMultiScale(
+        imgGray,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30, 30)
+    )
     # drawing bounding box for eyes
 
     eye_coords = []
+    face_coords = []
+    for (x, y, w, h) in faces:
+        face_coords.append((x + (w/2), y + (h/2)))
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
     for (ex, ey, ew, eh) in eyes:
         eye_coords.append((ex + (ew / 2), ey + (eh / 2)))
         img = cv2.rectangle(img, (ex, ey), (ex+ew, ey+eh), (255, 0, 0), 3)
 
     eyesX = []
     eyesY = []
-    if len(eye_coords) > 0:
+    if len(face_coords) > 0:
+        targetX = face_coords[0][0]
+        targetY = face_coords[0][1]
+    elif len(eye_coords) > 0:
         for eye in eye_coords:
             eyesX.append(eye[0])
             eyesY.append(eye[1])
