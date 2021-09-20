@@ -37,12 +37,13 @@ eyeCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_eye_tree
 eye_coords = []
 targetX, targetY = 0, 0
 dx, dy = 0, 0
+loop_counter = 0
 
 while True:
     success, img = cap.read()
     try:
         imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    except:
+    except:  # Fix pep thing Vojta
         raise Exception("Camera not found!")
 
     # Getting corners around the face
@@ -67,16 +68,24 @@ while True:
     else:  # if no target currently on screen, do not move camera
         targetX = 320
         targetY = 210
-    if targetX < 300:
-        dx = 2
-    elif targetX > 340:
-        dx = 1  # 2 means -1, but using only one char
+
+    weightedX = int(float(320 - targetX)/3.2)  # expected range: [-100,100]
+    weightedY = int(float(210 - targetY)/2.1)  # expected range: [-100,100]
+    if loop_counter < 100:
+        loop_counter += 1
+    else:
+        loop_counter = 0
+
+    if -10 > weightedX > loop_counter:  # "weightedX < -10 and loop_counter < weightedX" but simplified
+        dx = 2  # 2 means -1, but using only one char
+    elif weightedX > 10 and loop_counter < weightedX:
+        dx = 1
     else:
         dx = 0
 
-    if targetY < 200:
+    if -10 > weightedY > loop_counter:  # "weightedY < -10 and loop_counter < weightedY" but simplified
         dy = 1
-    elif targetY > 220:
+    elif weightedY > 10 and loop_counter < weightedY:
         dy = 2  # 2 means -1, but using only one char
     else:
         dy = 0
