@@ -109,8 +109,12 @@ while True:
 
     if abs(weightedX) > loop_counter:
         dx = dxd
+    else:
+        dx = 0
     if abs(weightedY) > loop_counter:
         dy = dyd
+    else:
+        dy = 0
 
     print(f"weightedX: {weightedX}\nweightedY: {weightedY}")
 
