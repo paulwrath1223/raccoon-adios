@@ -34,6 +34,8 @@ faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontal
 # if you want to detect any object for example eyes, use one more layer of classifier as below:
 eyeCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_eye_tree_eyeglasses.xml")
 
+dxd = 0
+dyd = 0
 
 eye_coords = []
 targetX, targetY = 0, 0
@@ -91,19 +93,26 @@ while True:
     else:
         loop_counter = 0
 
-    if -10 > weightedX > loop_counter:  # "weightedX < -10 and loop_counter < weightedX" but simplified
-        dx = 2  # 2 means -1, but using only one char
-    elif weightedX > 10 and loop_counter < weightedX:
-        dx = 1
+    if -10 > weightedX:
+        dxd = 2  # 2 means -1, but using only one char
+    elif weightedX > 10:
+        dxd = 1
     else:
-        dx = 0
+        dxd = 0
 
-    if -10 > weightedY > loop_counter:  # "weightedY < -10 and loop_counter < weightedY" but simplified
-        dy = 1
-    elif weightedY > 10 and loop_counter < weightedY:
-        dy = 2  # 2 means -1, but using only one char
+    if -10 > weightedY:
+        dyd = 1
+    elif weightedY > 10:
+        dyd = 2  # 2 means -1, but using only one char
     else:
-        dy = 0
+        dyd = 0
+
+    if abs(weightedX) > loop_counter:
+        dx = dxd
+    if abs(weightedY) > loop_counter:
+        dy = dyd
+
+    print(f"weightedX: {weightedX}\nweightedY: {weightedY}")
 
     # print(f"targetX: {targetX}\ntargetY: {targetY}")
     set_pos(dx, dy)
