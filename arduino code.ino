@@ -8,8 +8,8 @@ char receivedChars[numChars];   // an array to store the received data
 boolean newData = false;
 
 
-int x = 90;
-int y = 90;
+float x = 90.0;
+float y = 90.0;
 
 int dx = 0;
 int dy = 0;
@@ -47,13 +47,13 @@ void loop() {
       dy = -1;
     }
 
-    if((x + dx<=180)&&(x + dx>=0))
+    if((x + (dx/10) <= 180.0 ) && (x + (dx/10) >= 0.0))
     {
-      x += dx;
+      x += (dx/10);
     }
-    if((y + dy<=180)&&(y + dy>=0))
+    if((y + (dy/10) <= 180.0) && (y + (dy/10) >= 0.0))
     {
-      y += dy;
+      y += (dy/10);
     }
 
     // lcd.setCursor(0,0);
@@ -65,8 +65,8 @@ void loop() {
     // lcd.setCursor(5,1);
     // lcd.print(dy);
 
-    servoX.write(x);
-    servoY.write(y);                 // sets the servo position according to the scaled value
+    servoX.write(int(x));
+    servoY.write(int(y));                 // sets the servo position according to the scaled value
 }
 
 void recvWithEndMarker() {
