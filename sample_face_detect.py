@@ -72,8 +72,8 @@ while True:
     eyesX = []
     eyesY = []
     if len(face_coords) > 0:
-        targetX = face_coords[0][0]
-        targetY = face_coords[0][1]
+        targetX = int(face_coords[0][0])
+        targetY = int(face_coords[0][1])
     elif len(eye_coords) > 0:
         for eye in eye_coords:
             eyesX.append(eye[0])
