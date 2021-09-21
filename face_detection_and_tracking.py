@@ -30,8 +30,8 @@ arduino_output = False
 if arduino_output:
     arduino = serial.Serial(port='COM20', baudrate=115200, timeout=.1)  # change com port depending on the com port
 
-resX = 1920.0  # constants for camera res (does not need to match real res)
-resY = 1080.0
+resX = 1000  # constants for camera res (does not need to match real res)
+resY = 500
 
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 cap.set(3, resX)
@@ -121,7 +121,7 @@ while True:
     weightedX = int(float((resX/2) - targetX)/(resX/100))  # expected range: [-100,100]
     weightedY = int(float((resY/2) - targetY)/(resY/100))  # expected range: [-100,100]
 
-    if loop_counter < 100:
+    if loop_counter < 50:
         loop_counter += 1
     else:
         loop_counter = 0
@@ -150,11 +150,16 @@ while True:
         dy = 0
 
     print(f"weightedX: {weightedX}\nweightedY: {weightedY}")
-
+    print(f"dxd: {dxd}\ndyd: {dyd}")
+    print(f"dx: {dx}\ndy: {dy}")
     print(f"targetX: {targetX}\ntargetY: {targetY}")
     set_pos(dx, dy)
-    # img = cv2.rectangle(img, (targetX-5, targetY-5), (targetX+5, targetY+5), (255, 255, 0), 3)
-
+    img = cv2.rectangle(img, (int(targetX-5), int(targetY-5)), (int(targetX+5), int(targetY+5)), (255, 255, 0), 3)
+    if eye_in_face_coords != (-1, -1):
+        eye_in_face_x = eye_in_face_coords[0]
+        eye_in_face_y = eye_in_face_coords[1]
+        img = cv2.rectangle(img, (int(eye_in_face_x - 5), int(eye_in_face_y - 5)),
+                            (int(eye_in_face_x + 5), int(eye_in_face_y + 5)), (255, 255, 255), 3)
     cv2.imshow('face_detect', img)
 
     if cv2.waitKey(10) & 0xFF == ord('q'):
