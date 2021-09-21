@@ -3,14 +3,15 @@ import cv2
 
 import serial
 import time
-arduino = serial.Serial(port='COM20', baudrate=115200, timeout=.1)  # change com port depending on the com port
 
 
 def write_read(message):
-    arduino.write(bytes(str(message), 'utf-8'))  # gives 'TypeError: encoding without a string argument'
-    time.sleep(0.05)
-    data = arduino.readline()
-    return data
+    if arduino_output:
+        arduino.write(bytes(str(message), 'utf-8'))
+        time.sleep(0.05)
+        data = arduino.readline()
+        return data
+    return ""
 
 
 def set_pos(x, y):
@@ -24,8 +25,13 @@ def set_pos(x, y):
 
 # Enable camera
 
-resX = 640  # constants for camera res (does not need to match real res)
-resY = 420
+arduino_output = False
+
+if arduino_output:
+    arduino = serial.Serial(port='COM20', baudrate=115200, timeout=.1)  # change com port depending on the com port
+
+resX = 1920.0  # constants for camera res (does not need to match real res)
+resY = 1080.0
 
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 cap.set(3, resX)
@@ -112,8 +118,8 @@ while True:
         targetX = (resX/2)
         targetY = (resY/2)
 
-    weightedX = int(float((resX/2) - targetX)/3.2)  # expected range: [-100,100]
-    weightedY = int(float((resY/2) - targetY)/2.1)  # expected range: [-100,100]
+    weightedX = int(float((resX/2) - targetX)/(resX/100))  # expected range: [-100,100]
+    weightedY = int(float((resY/2) - targetY)/(resY/100))  # expected range: [-100,100]
 
     if loop_counter < 100:
         loop_counter += 1
@@ -143,11 +149,11 @@ while True:
     else:
         dy = 0
 
-    # print(f"weightedX: {weightedX}\nweightedY: {weightedY}")
+    print(f"weightedX: {weightedX}\nweightedY: {weightedY}")
 
-    # print(f"targetX: {targetX}\ntargetY: {targetY}")
+    print(f"targetX: {targetX}\ntargetY: {targetY}")
     set_pos(dx, dy)
-    img = cv2.rectangle(img, (targetX-5, targetY-5), (targetX+5, targetY+5), (255, 255, 0), 3)
+    # img = cv2.rectangle(img, (targetX-5, targetY-5), (targetX+5, targetY+5), (255, 255, 0), 3)
 
     cv2.imshow('face_detect', img)
 
