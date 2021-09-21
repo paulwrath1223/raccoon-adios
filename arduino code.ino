@@ -17,6 +17,8 @@ int dy = 0;
 char cx;
 char cy;
 
+const int pFactor = 300; // represents the inverse of the movement speed. (higher is slower)
+
 
 
 // LiquidCrystal_I2C lcd(0x27,16,2);  // set the LCD address to 0x27 for a 16 chars and 2 line display
@@ -47,13 +49,13 @@ void loop() {
       dy = -1;
     }
 
-    if((x + (float(dx)/300) <= 180.0 ) && (x + (float(dx)/300) >= 0.0))
+    if((x + (float(dx)/pFactor) <= 180.0 ) && (x + (float(dx)/pFactor) >= 0.0))
     {
-      x += (float(dx)/100);
+      x += (float(dx)/pFactor);
     }
-    if((y + (float(dy)/300) <= 180.0) && (y + (float(dy)/300) >= 0.0))
+    if((y + (float(dy)/pFactor) <= 180.0) && (y + (float(dy)/pFactor) >= 0.0))
     {
-      y += (float(dy)/300);
+      y += (float(dy)/pFactor);
     }
 
     // lcd.setCursor(0,0);
