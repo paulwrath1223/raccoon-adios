@@ -23,9 +23,13 @@ def set_pos(x, y):
 # ^ pip install opencv-contrib-python
 
 # Enable camera
+
+resX = 640  # constants for camera res (does not need to match real res)
+resY = 420
+
 cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-cap.set(3, 640)
-cap.set(4, 420)
+cap.set(3, resX)
+cap.set(4, resY)
 
 # import cascade file for facial recognition
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
@@ -80,27 +84,36 @@ while True:
             eye_coords.append((ex + (ew / 2), ey + (eh / 2)))
             img = cv2.rectangle(img, (ex, ey), (ex + ew, ey + eh), (255, 0, 0), 3)
 
+    eye_in_face_coords = (-1, -1)
+
     for counter in range(len(faces[2])):
         if faces[2][counter][0] > face_conf_threshold:
             fx, fy, fw, fh = faces[0][counter]
+            for eye_coord in eye_coords:
+                currentX = eye_coord[0]
+                currentY = eye_coord[1]
+                if fx < currentX < fx+fw and fy < currentY < fy+fh:
+                    eye_in_face_coords = (currentX, currentY)
             eye_coords.append((fx + (fw / 2), fy + (fh / 2)))
             img = cv2.rectangle(img, (fx, fy), (fx + fw, fy + fh), (255, 0, 0), 3)
 
     eyesX = []
     eyesY = []
-
-    if len(eye_coords) > 0:
+    if eye_in_face_coords != (-1, -1):
+        targetX = eye_in_face_coords[0]
+        targetY = eye_in_face_coords[1]
+    elif len(eye_coords) > 0:
         for eye in eye_coords:
             eyesX.append(eye[0])
             eyesY.append(eye[1])
         targetX = int(sum(eyesX) / len(eyesX))
         targetY = int(sum(eyesY) / len(eyesY))
     else:  # if no target currently on screen, do not move camera
-        targetX = 320
-        targetY = 210
+        targetX = (resX/2)
+        targetY = (resY/2)
 
-    weightedX = int(float(320 - targetX)/3.2)  # expected range: [-100,100]
-    weightedY = int(float(210 - targetY)/2.1)  # expected range: [-100,100]
+    weightedX = int(float((resX/2) - targetX)/3.2)  # expected range: [-100,100]
+    weightedY = int(float((resY/2) - targetY)/2.1)  # expected range: [-100,100]
 
     if loop_counter < 100:
         loop_counter += 1
