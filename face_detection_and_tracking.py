@@ -25,7 +25,8 @@ def set_pos(x, y):
 
 # Enable camera
 
-arduino_output = False
+arduino_output = False  # constant for arduino communication, false to test with no arduino
+debug = True  # print vars? display image?
 
 if arduino_output:
     arduino = serial.Serial(port='COM20', baudrate=115200, timeout=.1)  # change com port depending on the com port
@@ -148,19 +149,19 @@ while True:
         dy = dyd
     else:
         dy = 0
-
-    print(f"weightedX: {weightedX}\nweightedY: {weightedY}")
-    print(f"dxd: {dxd}\ndyd: {dyd}")
-    print(f"dx: {dx}\ndy: {dy}")
-    print(f"targetX: {targetX}\ntargetY: {targetY}")
-    set_pos(dx, dy)
-    img = cv2.rectangle(img, (int(targetX-5), int(targetY-5)), (int(targetX+5), int(targetY+5)), (255, 255, 0), 3)
-    if eye_in_face_coords != (-1, -1):
-        eye_in_face_x = eye_in_face_coords[0]
-        eye_in_face_y = eye_in_face_coords[1]
-        img = cv2.rectangle(img, (int(eye_in_face_x - 5), int(eye_in_face_y - 5)),
-                            (int(eye_in_face_x + 5), int(eye_in_face_y + 5)), (255, 255, 255), 3)
-    cv2.imshow('face_detect', img)
+    if debug:
+        print(f"weightedX: {weightedX}\nweightedY: {weightedY}")
+        print(f"dxd: {dxd}\ndyd: {dyd}")
+        print(f"dx: {dx}\ndy: {dy}")
+        print(f"targetX: {targetX}\ntargetY: {targetY}")
+        set_pos(dx, dy)
+        img = cv2.rectangle(img, (int(targetX-5), int(targetY-5)), (int(targetX+5), int(targetY+5)), (255, 255, 0), 3)
+        if eye_in_face_coords != (-1, -1):
+            eye_in_face_x = eye_in_face_coords[0]
+            eye_in_face_y = eye_in_face_coords[1]
+            img = cv2.rectangle(img, (int(eye_in_face_x - 5), int(eye_in_face_y - 5)),
+                                (int(eye_in_face_x + 5), int(eye_in_face_y + 5)), (255, 255, 255), 3)
+        cv2.imshow('face_detect', img)
 
     if cv2.waitKey(10) & 0xFF == ord('q'):
         break
