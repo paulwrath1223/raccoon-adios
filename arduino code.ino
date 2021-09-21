@@ -47,13 +47,13 @@ void loop() {
       dy = -1;
     }
 
-    if((x + (float(dx)/10) <= 180.0 ) && (x + (float(dx)/10) >= 0.0))
+    if((x + (float(dx)/300) <= 180.0 ) && (x + (float(dx)/300) >= 0.0))
     {
-      x += (float(dx)/10);
+      x += (float(dx)/100);
     }
-    if((y + (float(dy)/10) <= 180.0) && (y + (float(dy)/10) >= 0.0))
+    if((y + (float(dy)/300) <= 180.0) && (y + (float(dy)/300) >= 0.0))
     {
-      y += (float(dy)/10);
+      y += (float(dy)/300);
     }
 
     // lcd.setCursor(0,0);
@@ -102,7 +102,6 @@ void updateDxDy() {
         newData = false;
     }
 }
-
 
 
 
