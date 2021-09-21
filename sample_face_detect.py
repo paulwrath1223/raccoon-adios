@@ -1,17 +1,16 @@
 import cv2
-import numpy
 
-# import serial
-# import time
-# arduino = serial.Serial(port='COM20', baudrate=115200, timeout=.1)  # change com port depending on the com port
+
+import serial
+import time
+arduino = serial.Serial(port='COM20', baudrate=115200, timeout=.1)  # change com port depending on the com port
 
 
 def write_read(message):
-    # arduino.write(bytes(str(message), 'utf-8'))  # gives 'TypeError: encoding without a string argument'
-    # time.sleep(0.05)
-    # data = arduino.readline()
-    # return data
-    return ""
+    arduino.write(bytes(str(message), 'utf-8'))  # gives 'TypeError: encoding without a string argument'
+    time.sleep(0.05)
+    data = arduino.readline()
+    return data
 
 
 def set_pos(x, y):
@@ -131,7 +130,7 @@ while True:
     else:
         dy = 0
 
-    print(f"weightedX: {weightedX}\nweightedY: {weightedY}")
+    # print(f"weightedX: {weightedX}\nweightedY: {weightedY}")
 
     # print(f"targetX: {targetX}\ntargetY: {targetY}")
     set_pos(dx, dy)
