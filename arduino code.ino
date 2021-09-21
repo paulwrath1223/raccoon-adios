@@ -1,5 +1,5 @@
 #include <Wire.h>
-#include <LiquidCrystal_I2C.h>
+// #include <LiquidCrystal_I2C.h>
 #include <Servo.h>
 
 const byte numChars = 32;
@@ -47,13 +47,13 @@ void loop() {
       dy = -1;
     }
 
-    if((x + (dx/10) <= 180.0 ) && (x + (dx/10) >= 0.0))
+    if((x + (float(dx)/10) <= 180.0 ) && (x + (float(dx)/10) >= 0.0))
     {
-      x += (dx/10);
+      x += (float(dx)/10);
     }
-    if((y + (dy/10) <= 180.0) && (y + (dy/10) >= 0.0))
+    if((y + (float(dy)/10) <= 180.0) && (y + (float(dy)/10) >= 0.0))
     {
-      y += (dy/10);
+      y += (float(dy)/10);
     }
 
     // lcd.setCursor(0,0);
