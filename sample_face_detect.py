@@ -1,4 +1,5 @@
 import cv2
+import numpy
 
 # import serial
 # import time
@@ -30,12 +31,15 @@ cap.set(4, 420)
 # import cascade file for facial recognition
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
-
 # if you want to detect any object for example eyes, use one more layer of classifier as below:
 eyeCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_eye_tree_eyeglasses.xml")
 
 dxd = 0
 dyd = 0
+
+eye_conf_threshold = 3  # const
+face_conf_threshold = 3  # const
+
 
 eye_coords = []
 targetX, targetY = 0, 0
@@ -52,31 +56,41 @@ while True:
     # Getting corners around the face
 
     # detecting eyes
-    eyes = eyeCascade.detectMultiScale(imgGray)
-    faces = faceCascade.detectMultiScale(
+    eyes = eyeCascade.detectMultiScale3(
+        imgGray,
+        outputRejectLevels=True)
+    faces = faceCascade.detectMultiScale3(
         imgGray,
         scaleFactor=1.1,
         minNeighbors=5,
-        minSize=(30, 30)
-    )
-    # drawing bounding box for eyes
+        minSize=(30, 30),
+        outputRejectLevels=True)
 
     eye_coords = []
     face_coords = []
-    for (x, y, w, h) in faces:
-        face_coords.append((x + (w/2), y + (h/2)))
-        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    # print(faces)
+    # print(f"confidence = {eyes[2][0][0]}")
+    #
+    # for (x, y, w, h) in faces[0]:
+    #     face_coords.append((x + (w/2), y + (h/2)))
+    #     cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-    for (ex, ey, ew, eh) in eyes:
-        eye_coords.append((ex + (ew / 2), ey + (eh / 2)))
-        img = cv2.rectangle(img, (ex, ey), (ex+ew, ey+eh), (255, 0, 0), 3)
+    for counter in range(len(eyes[2])):
+        if eyes[2][counter][0] > eye_conf_threshold:
+            ex, ey, ew, eh = eyes[0][counter]
+            eye_coords.append((ex + (ew / 2), ey + (eh / 2)))
+            img = cv2.rectangle(img, (ex, ey), (ex + ew, ey + eh), (255, 0, 0), 3)
+
+    for counter in range(len(faces[2])):
+        if faces[2][counter][0] > face_conf_threshold:
+            fx, fy, fw, fh = faces[0][counter]
+            eye_coords.append((fx + (fw / 2), fy + (fh / 2)))
+            img = cv2.rectangle(img, (fx, fy), (fx + fw, fy + fh), (255, 0, 0), 3)
 
     eyesX = []
     eyesY = []
-    if len(face_coords) > 0:
-        targetX = int(face_coords[0][0])
-        targetY = int(face_coords[0][1])
-    elif len(eye_coords) > 0:
+
+    if len(eye_coords) > 0:
         for eye in eye_coords:
             eyesX.append(eye[0])
             eyesY.append(eye[1])
@@ -88,6 +102,7 @@ while True:
 
     weightedX = int(float(320 - targetX)/3.2)  # expected range: [-100,100]
     weightedY = int(float(210 - targetY)/2.1)  # expected range: [-100,100]
+
     if loop_counter < 100:
         loop_counter += 1
     else:
